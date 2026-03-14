@@ -12,6 +12,10 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
 
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
   bool showPass = false;
   void showPassword() {
@@ -19,13 +23,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
       showPass = !showPass;
     });
   }
-  
+
+  Route<void> _createRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const LoginScreen(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return child;
+      },
+    );
+  }
+
+  bool emailValid(String email) {
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  }
+
+  void showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 19, 18, 18),
       body: Center(
-        child: SafeArea(
+        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -47,29 +73,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 25),
-              const InputAuthentication(hintText: "Nome"),
-              const SizedBox(height: 15),
-              const InputAuthentication(hintText: "E-mail"),
-              const SizedBox(height: 15),
+              const SizedBox(height: 20),
+              InputAuthentication(hintText: "Nome", controller: nameController,),
+              const SizedBox(height: 12),
+              InputAuthentication(hintText: "E-mail", controller: emailController,),
+              const SizedBox(height: 12),
               InputAuthentication(
                 hintText: "Senha",
+                controller: passwordController,
                 onPressed: showPassword,
                 icon: showPass ? Icons.visibility_off : Icons.visibility,
                 obscureText: showPass ? false : true,
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: 12),
               InputAuthentication(
                 hintText: "Confirme a senha",
+                controller: confirmPasswordController,
                 onPressed: showPassword,
                 icon: showPass ? Icons.visibility_off : Icons.visibility,
                 obscureText: showPass ? false : true,
               ),
-              const SizedBox(height: 35),
+              const SizedBox(height: 20),
               MyButton(
                 customColor: Color.fromARGB(255, 10, 185, 121),
                 text: "Registrar",
-                onTap: () {},
+                onTap: () {
+
+                  if (nameController.text.isEmpty) {
+                    showMessage("Digite seu nome");
+                    return;
+                  }
+
+                  if (!emailValid(emailController.text)) {
+                    showMessage("Email inválido");
+                    return;
+                  }
+
+                  if (passwordController.text.isEmpty) {
+                    showMessage("Digite uma senha");
+                    return;
+                  }
+
+                  if (passwordController.text != confirmPasswordController.text) {
+                    showMessage("As senhas não coincidem");
+                    return;
+                  }
+
+                },
               ),
               const SizedBox(height: 25),
               Row(
@@ -82,10 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(width: 20),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
-                      );
+                      Navigator.of(context).push(_createRoute());
                     },
                     child: Text(
                       "ENTRAR",

@@ -5,6 +5,7 @@ class InputAuthentication extends StatelessWidget {
   final IconData? icon;
   final void Function()? onPressed;
   final bool obscureText;
+  final TextEditingController? controller;
 
   const InputAuthentication({
     super.key,
@@ -12,13 +13,14 @@ class InputAuthentication extends StatelessWidget {
     this.icon,
     this.onPressed,
     this.obscureText = false,
+    this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 25),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.grey[600]!.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
@@ -28,6 +30,7 @@ class InputAuthentication extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
+              controller: controller,
               style: const TextStyle(
                 color: Colors.white,
               ),

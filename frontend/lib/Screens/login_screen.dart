@@ -11,19 +11,45 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+
   bool showPass = false;
   void showPassword() {
     setState(() {
       showPass = !showPass;
     });
-  }  
+  }
+
+  Route<void> _createRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const RegisterScreen(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return child;
+      },
+    );
+  }
+
+  bool emailValid(String email) {
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  }
+
+  void showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 19, 18, 18),
       body: Center(
-        child: SafeArea(
+        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -39,42 +65,52 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 30,
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 255, 255, 255)
+                        color: Color.fromARGB(255, 255, 255, 255),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 25),
-              InputAuthentication(hintText: "Email"),
-              const SizedBox(height: 15),
+              const SizedBox(height: 20),
+              InputAuthentication(hintText: "Email", controller: emailController,),
+              const SizedBox(height: 12),
               InputAuthentication(
                 hintText: "Password",
+                controller: passwordController,
                 onPressed: showPassword,
                 icon: showPass ? Icons.visibility_off : Icons.visibility,
                 obscureText: showPass ? false : true,
               ),
-              const SizedBox(height: 35),
+              const SizedBox(height: 20),
               MyButton(
                 customColor: Color.fromARGB(255, 10, 185, 121),
                 text: "Entrar",
-                onTap: () {},
+                onTap: () {
+
+                  if (!emailValid(emailController.text)) {
+                    showMessage("Email inválido!");
+                    return;
+                  }
+
+                  if (passwordController.text.isEmpty) {
+                    showMessage("Digite a sua senha!");
+                    return;
+                  }
+
+                },
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     "Não tem uma conta?",
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
+                    style: TextStyle(color: Colors.white),
                   ),
                   SizedBox(width: 20),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => RegisterScreen()));
+                      Navigator.of(context).push(_createRoute());
                     },
                     child: Text(
                       "REGISTRAR",
@@ -84,10 +120,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
-            ],         
+            ],
           ),
         ),
       ),
