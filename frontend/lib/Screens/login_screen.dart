@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Widgets/input_on_login_screen.dart';
+import 'package:frontend/Widgets/input_authentication.dart';
+import 'package:frontend/Widgets/button_authentication.dart';
+import 'package:frontend/Screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,13 +17,6 @@ class _LoginScreenState extends State<LoginScreen> {
       showPass = !showPass;
     });
   }  
-
-  bool checkTheBox = false;
-  void check() {
-    setState(() {
-      checkTheBox = !checkTheBox;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +46,46 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 25),
-              InputOnLoginScreen(hintText: "Email"),
+              InputAuthentication(hintText: "Email"),
               const SizedBox(height: 15),
-              InputOnLoginScreen(
+              InputAuthentication(
                 hintText: "Password",
                 onPressed: showPassword,
                 icon: showPass ? Icons.visibility_off : Icons.visibility,
                 obscureText: showPass ? false : true,
+              ),
+              const SizedBox(height: 35),
+              MyButton(
+                customColor: Color.fromARGB(255, 10, 185, 121),
+                text: "Entrar",
+                onTap: () {},
+              ),
+              const SizedBox(height: 25),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Não tem uma conta?",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => RegisterScreen()));
+                    },
+                    child: Text(
+                      "REGISTRAR",
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Color.fromARGB(255, 10, 185, 121),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                ],
               ),
             ],         
           ),

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class InputOnLoginScreen extends StatelessWidget {
+class InputAuthentication extends StatelessWidget {
   final String hintText;
   final IconData? icon;
   final void Function()? onPressed;
   final bool obscureText;
 
-  const InputOnLoginScreen({
+  const InputAuthentication({
     super.key,
     required this.hintText,
     this.icon,
@@ -35,13 +35,17 @@ class InputOnLoginScreen extends StatelessWidget {
                 border: InputBorder.none,
                 hintText: hintText,
                 hintStyle: TextStyle(
-                  color: Colors.white,
+                  color: Colors.white.withValues(alpha: 0.5),
                 ),
               ),
               obscureText: obscureText,
             ),
           ),
-          IconButton(onPressed: onPressed, icon: Icon(icon))
+          IconButton(
+            onPressed: onPressed, 
+            icon: Icon(icon),
+            color: Colors.grey,
+          ),
         ],
       ),
     );
