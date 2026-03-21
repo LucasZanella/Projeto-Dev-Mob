@@ -6,6 +6,7 @@ class InputAuthentication extends StatelessWidget {
   final void Function()? onPressed;
   final bool obscureText;
   final TextEditingController? controller;
+  final String? errorText;
 
   const InputAuthentication({
     super.key,
@@ -14,41 +15,59 @@ class InputAuthentication extends StatelessWidget {
     this.onPressed,
     this.obscureText = false,
     this.controller,
+    this.errorText
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 25),
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-      decoration: BoxDecoration(
-        color: Colors.grey[600]!.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: TextField(
-              controller: controller,
-              style: const TextStyle(
-                color: Colors.white,
-              ),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: hintText,
-                hintStyle: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+            decoration: BoxDecoration(
+              color: Colors.grey[600]!.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: hintText,
+                      hintStyle: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.5),
+                      ),
+                    ),
+                    obscureText: obscureText,
+                  ),
                 ),
-              ),
-              obscureText: obscureText,
+                if (icon != null)
+                  IconButton(
+                    onPressed: onPressed,
+                    icon: Icon(icon),
+                    color: Colors.grey,
+                  ),
+              ],
             ),
           ),
-          IconButton(
-            onPressed: onPressed, 
-            icon: Icon(icon),
-            color: Colors.grey,
-          ),
+
+          if (errorText != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 5, left: 5),
+              child: Text(
+                errorText!,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontSize: 12,
+                ),
+              ),
+            ),
         ],
       ),
     );

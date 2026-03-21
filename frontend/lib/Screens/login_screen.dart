@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/Widgets/input_authentication.dart';
 import 'package:frontend/Widgets/button_authentication.dart';
 import 'package:frontend/Screens/register_screen.dart';
+import 'package:frontend/Utils/input_validators.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,15 +13,13 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-
   bool showPass = false;
   void showPassword() {
     setState(() {
       showPass = !showPass;
     });
   }
+
 
   Route<void> _createRoute() {
     return PageRouteBuilder(
@@ -32,87 +31,124 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  bool emailValid(String email) {
-    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+
+  final TextEditingController emailController = TextEditingController();
+  String? emailError;
+  String? passwordError;
+
+  void validateEmail() {
+
+    if (emailController.text.isEmpty) {
+      emailError = "Digite seu email";
+    } 
+    else if (!InputValidators.emailValid(emailController.text)) {
+      emailError = "Email inválido";
+    } 
+    else {
+      emailError = null;
+    }
   }
 
-  void showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+
+  final TextEditingController passwordController = TextEditingController();
+
+  void validatePassword() {
+
+    if (passwordController.text.isEmpty) {
+      passwordError = "Digite sua senha";
+    } else {
+      passwordError = null;
+    }
   }
+
+
+  void login() {
+
+    setState(() {
+      validateEmail();
+      validatePassword();
+    });
+
+    if (emailError != null) return;
+    if (passwordError != null) return;
+  }
+
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 19, 18, 18),
+      backgroundColor: const Color.fromARGB(255, 19, 18, 18),
+
       body: Center(
         child: SingleChildScrollView(
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+
             children: [
+              const SizedBox(height: 15),
               Container(
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(left: 25.0),
-                child: Row(
-                  children: [
-                    Text(
-                      "Bem-Vindo!",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 255, 255, 255),
-                      ),
-                    ),
-                  ],
+                padding: const EdgeInsets.only(left: 25),
+
+                child: const Text(
+                  "Bem-Vindo!",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
+
               const SizedBox(height: 20),
-              InputAuthentication(hintText: "Email", controller: emailController,),
-              const SizedBox(height: 12),
+
               InputAuthentication(
-                hintText: "Password",
+                hintText: "Email",
+                controller: emailController,
+                errorText: emailError,
+              ),
+
+              const SizedBox(height: 12),
+
+              InputAuthentication(
+                hintText: "Senha",
                 controller: passwordController,
                 onPressed: showPassword,
                 icon: showPass ? Icons.visibility_off : Icons.visibility,
-                obscureText: showPass ? false : true,
+                obscureText: !showPass,
+                errorText: passwordError,
               ),
+
               const SizedBox(height: 20),
-              MyButton(
-                customColor: Color.fromARGB(255, 10, 185, 121),
+
+              ButtonAuthentication(
+                customColor: const Color.fromARGB(255, 10, 185, 121),
                 text: "Entrar",
-                onTap: () {
-
-                  if (!emailValid(emailController.text)) {
-                    showMessage("Email inválido!");
-                    return;
-                  }
-
-                  if (passwordController.text.isEmpty) {
-                    showMessage("Digite a sua senha!");
-                    return;
-                  }
-
-                },
+                onTap: login,
               ),
+
               const SizedBox(height: 20),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+
+                  const Text(
                     "Não tem uma conta?",
                     style: TextStyle(color: Colors.white),
                   ),
-                  SizedBox(width: 20),
+
+                  const SizedBox(width: 20),
+
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(_createRoute());
                     },
-                    child: Text(
+
+                    child: const Text(
                       "REGISTRAR",
                       style: TextStyle(
                         decoration: TextDecoration.underline,
@@ -121,8 +157,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
+
                 ],
               ),
+              const SizedBox(height: 15),
             ],
           ),
         ),
