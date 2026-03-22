@@ -13,7 +13,14 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  String? emailError;
+  String? passwordError;
+
   bool showPass = false;
+
   void showPassword() {
     setState(() {
       showPass = !showPass;
@@ -32,12 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
 
-  final TextEditingController emailController = TextEditingController();
-  String? emailError;
-  String? passwordError;
-
   void validateEmail() {
-
     if (emailController.text.isEmpty) {
       emailError = "Digite seu email";
     } 
@@ -50,10 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
 
-  final TextEditingController passwordController = TextEditingController();
-
   void validatePassword() {
-
     if (passwordController.text.isEmpty) {
       passwordError = "Digite sua senha";
     } else {
@@ -63,7 +62,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
   void login() {
-
     setState(() {
       validateEmail();
       validatePassword();
@@ -88,6 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             children: [
               const SizedBox(height: 15),
+              
               Container(
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.only(left: 25),

@@ -14,29 +14,22 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
 
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
 
+  String? nameError;
+  String? emailError;
+
+  bool hasMinLength = false;
+  bool hasNumber = false;
+  bool hasSpecial = false;
+  bool hasUppercase = false;
+  bool hasLowercase = false;
+  bool passwordsMatch = false;
 
   bool showPass = false;
-  void showPassword() {
-    setState(() {
-      showPass = !showPass;
-    });
-  }
-
-
-  @override
-  void initState() {
-    super.initState();
-
-    passwordController.addListener(validatePassword);
-    passwordController.addListener(validateConfirmPassword);
-    confirmPasswordController.addListener(validateConfirmPassword);
-  }
-
 
   Route<void> _createRoute() {
     return PageRouteBuilder(
@@ -47,6 +40,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
       },
     );
   }
+
+
+    void validateName() {
+      setState(() {
+        if (!InputValidators.nameValid(nameController.text)) {
+          nameError = "Digite um nome válido";
+        } else {
+          nameError = null;
+        }
+      });
+    }
 
 
   void validateEmail() {
@@ -66,12 +70,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
 
-  bool hasMinLength = false;
-  bool hasNumber = false;
-  bool hasSpecial = false;
-  bool hasUppercase = false;
-  bool hasLowercase = false;
-  bool passwordsMatch = false;
+  void showPassword() {
+    setState(() {
+      showPass = !showPass;
+    });
+  }
+
 
   void validatePassword() {
     String password = passwordController.text;
@@ -85,34 +89,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-
-  String? emailError;
-  String? confirmPasswordError;
-
   void validateConfirmPassword() {
-
-    String password = passwordController.text;
-    String confirm = confirmPasswordController.text;
+    final password = passwordController.text;
+    final confirm = confirmPasswordController.text;
 
     setState(() {
-      passwordsMatch = password.isNotEmpty && confirm.isNotEmpty && password == confirm;
+      passwordsMatch = InputValidators.passwordsMatch(password, confirm) && password.isNotEmpty && confirm.isNotEmpty;
     });
   }
 
   void register() {
 
-    validateEmail();
-    validatePassword();
-    validateConfirmPassword();
+    setState(() {
+      validateName();
+      validateEmail();
+      validatePassword();
+      validateConfirmPassword();
+    });
 
-    if (nameController.text.isEmpty) return;
-
+    if (nameError != null) return;
+    
     if (emailError != null) return;
 
-    if (!hasMinLength || !hasNumber || !hasSpecial || !hasUppercase || !hasLowercase) return;
+    if (!InputValidators.passwordValid(passwordController.text)) return;
 
     if (!passwordsMatch) return;
+  }
 
+
+  @override
+  void initState() {
+    super.initState();
+
+    passwordController.addListener(validatePassword);
+    passwordController.addListener(validateConfirmPassword);
+    confirmPasswordController.addListener(validateConfirmPassword);
   }
 
   @override
@@ -149,6 +160,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               InputAuthentication(
                 hintText: "Nome",
                 controller: nameController,
+                errorText: nameError,
               ),
 
               const SizedBox(height: 12),
@@ -164,16 +176,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               InputAuthentication(
                 hintText: "Senha",
                 controller: passwordController,
-                onPressed: showPassword,
-                icon: showPass ? Icons.visibility_off : Icons.visibility,
-                obscureText: !showPass,
-              ),
-
-              const SizedBox(height: 12),
-
-              InputAuthentication(
-                hintText: "Confirme a senha",
-                controller: confirmPasswordController,
                 onPressed: showPassword,
                 icon: showPass ? Icons.visibility_off : Icons.visibility,
                 obscureText: !showPass,
@@ -208,14 +210,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   PasswordRequirement(
                     text: "1 letra minúscula",
                     valid: hasLowercase,
-                  ),
+                  )
+                ],
+              ),
+
+              const SizedBox(height: 12),
+
+              InputAuthentication(
+                hintText: "Confirme a senha",
+                controller: confirmPasswordController,
+                onPressed: showPassword,
+                icon: showPass ? Icons.visibility_off : Icons.visibility,
+                obscureText: !showPass,
+              ),
+
+              const SizedBox(height: 6),
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
 
                   PasswordRequirement(
                     text: "As senhas coincidem",
-                    valid: passwordsMatch,
-                  ),
-
-                ],
+                    valid: passwordsMatch,        
+                  )
+                ]
               ),
 
               const SizedBox(height: 20),

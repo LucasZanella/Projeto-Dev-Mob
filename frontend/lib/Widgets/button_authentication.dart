@@ -4,6 +4,7 @@ class ButtonAuthentication extends StatelessWidget {
   final Color customColor;
   final String text;
   final void Function()? onTap;
+  
   const ButtonAuthentication({
     super.key,
     required this.customColor,
