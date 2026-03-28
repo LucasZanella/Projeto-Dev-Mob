@@ -1,11 +1,18 @@
-require("dotenv").config()
+const express = require('express');
+const app = express();
 
-const express = require("express")
-const cors = require("cors")
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./docs/swagger');
 
-const app = express()
+const authRoutes = require('./routes/authRoutes');
+const passwordRoutes = require('./routes/passwordRoutes');
 
-app.use(cors())
-app.use(express.json())
 
-module.exports = app
+app.use(express.json());
+
+app.use('/auth', authRoutes);
+app.use('/passwords', passwordRoutes);
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+module.exports = app;
