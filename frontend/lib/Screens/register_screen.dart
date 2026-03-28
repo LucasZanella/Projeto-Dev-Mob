@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/Widgets/input_authentication.dart';
 import 'package:frontend/Widgets/button_authentication.dart';
 import 'package:frontend/Screens/login_screen.dart';
+import 'package:frontend/Utils/input_validators.dart';
+import 'package:frontend/Widgets/password_requirement.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -12,17 +14,22 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
 
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+
+  String? nameError;
+  String? emailError;
+
+  bool hasMinLength = false;
+  bool hasNumber = false;
+  bool hasSpecial = false;
+  bool hasUppercase = false;
+  bool hasLowercase = false;
+  bool passwordsMatch = false;
 
   bool showPass = false;
-  void showPassword() {
-    setState(() {
-      showPass = !showPass;
-    });
-  }
 
   Route<void> _createRoute() {
     return PageRouteBuilder(
@@ -34,107 +41,229 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  bool emailValid(String email) {
-    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+
+    void validateName() {
+      setState(() {
+        if (!InputValidators.nameValid(nameController.text)) {
+          nameError = "Digite um nome válido";
+        } else {
+          nameError = null;
+        }
+      });
+    }
+
+
+  void validateEmail() {
+    setState(() {
+
+      if (emailController.text.isEmpty) {
+        emailError = "Digite seu email";
+      } 
+      else if (!InputValidators.emailValid(emailController.text)) {
+        emailError = "Email inválido";
+      } 
+      else {
+        emailError = null;
+      }
+
+    });
   }
 
-  void showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+
+  void showPassword() {
+    setState(() {
+      showPass = !showPass;
+    });
+  }
+
+
+  void validatePassword() {
+    String password = passwordController.text;
+
+    setState(() {
+      hasMinLength = InputValidators.hasMinLength(password);
+      hasNumber = InputValidators.hasNumber(password);
+      hasSpecial = InputValidators.hasSpecialChar(password);
+      hasUppercase = InputValidators.hasUppercase(password);
+      hasLowercase = InputValidators.hasLowercase(password);
+    });
+  }
+
+  void validateConfirmPassword() {
+    final password = passwordController.text;
+    final confirm = confirmPasswordController.text;
+
+    setState(() {
+      passwordsMatch = InputValidators.passwordsMatch(password, confirm) && password.isNotEmpty && confirm.isNotEmpty;
+    });
+  }
+
+  void register() {
+
+    setState(() {
+      validateName();
+      validateEmail();
+      validatePassword();
+      validateConfirmPassword();
+    });
+
+    if (nameError != null) return;
+    
+    if (emailError != null) return;
+
+    if (!InputValidators.passwordValid(passwordController.text)) return;
+
+    if (!passwordsMatch) return;
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    passwordController.addListener(validatePassword);
+    passwordController.addListener(validateConfirmPassword);
+    confirmPasswordController.addListener(validateConfirmPassword);
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 19, 18, 18),
+      backgroundColor: const Color.fromARGB(255, 19, 18, 18),
+
       body: Center(
         child: SingleChildScrollView(
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+
             children: [
+              const SizedBox(height: 15),
               Container(
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(left: 25.0),
-                child: Row(
-                  children: [
-                    Text(
-                      "Bem-Vindo!",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 255, 255, 255),
-                      ),
-                    ),
-                  ],
+                padding: const EdgeInsets.only(left: 25),
+
+                child: const Text(
+                  "Bem-Vindo!",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
+
               const SizedBox(height: 20),
-              InputAuthentication(hintText: "Nome", controller: nameController,),
+
+              InputAuthentication(
+                hintText: "Nome",
+                controller: nameController,
+                errorText: nameError,
+              ),
+
               const SizedBox(height: 12),
-              InputAuthentication(hintText: "E-mail", controller: emailController,),
+
+              InputAuthentication(
+                hintText: "E-mail",
+                controller: emailController,
+                errorText: emailError,
+              ),
+
               const SizedBox(height: 12),
+
               InputAuthentication(
                 hintText: "Senha",
                 controller: passwordController,
                 onPressed: showPassword,
                 icon: showPass ? Icons.visibility_off : Icons.visibility,
-                obscureText: showPass ? false : true,
+                obscureText: !showPass,
               ),
+
+              const SizedBox(height: 6),
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  PasswordRequirement(
+                    text: "Pelo menos 8 caracteres",
+                    valid: hasMinLength,
+                  ),
+
+                  PasswordRequirement(
+                    text: "Pelo menos 1 número",
+                    valid: hasNumber,
+                  ),
+
+                  PasswordRequirement(
+                    text: "1 caractere especial",
+                    valid: hasSpecial,
+                  ),
+
+                  PasswordRequirement(
+                    text: "1 letra maiúscula",
+                    valid: hasUppercase,
+                  ),
+
+                  PasswordRequirement(
+                    text: "1 letra minúscula",
+                    valid: hasLowercase,
+                  )
+                ],
+              ),
+
               const SizedBox(height: 12),
+
               InputAuthentication(
                 hintText: "Confirme a senha",
                 controller: confirmPasswordController,
                 onPressed: showPassword,
                 icon: showPass ? Icons.visibility_off : Icons.visibility,
-                obscureText: showPass ? false : true,
+                obscureText: !showPass,
               ),
+
+              const SizedBox(height: 6),
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  PasswordRequirement(
+                    text: "As senhas coincidem",
+                    valid: passwordsMatch,        
+                  )
+                ]
+              ),
+
               const SizedBox(height: 20),
-              MyButton(
-                customColor: Color.fromARGB(255, 10, 185, 121),
+
+              ButtonAuthentication(
+                customColor: const Color.fromARGB(255, 10, 185, 121),
                 text: "Registrar",
-                onTap: () {
-
-                  if (nameController.text.isEmpty) {
-                    showMessage("Digite seu nome");
-                    return;
-                  }
-
-                  if (!emailValid(emailController.text)) {
-                    showMessage("Email inválido");
-                    return;
-                  }
-
-                  if (passwordController.text.isEmpty) {
-                    showMessage("Digite uma senha");
-                    return;
-                  }
-
-                  if (passwordController.text != confirmPasswordController.text) {
-                    showMessage("As senhas não coincidem");
-                    return;
-                  }
-
-                },
+                onTap: register,
               ),
+
               const SizedBox(height: 25),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+
+                  const Text(
                     "Já possui uma conta?",
                     style: TextStyle(color: Colors.white),
                   ),
-                  SizedBox(width: 20),
+
+                  const SizedBox(width: 20),
+
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(_createRoute());
                     },
-                    child: Text(
+
+                    child: const Text(
                       "ENTRAR",
                       style: TextStyle(
                         decoration: TextDecoration.underline,
@@ -145,6 +274,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ],
               ),
+              const SizedBox(height: 15),
             ],
           ),
         ),
