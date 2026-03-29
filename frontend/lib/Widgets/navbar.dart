@@ -22,7 +22,7 @@ class NavBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color.fromARGB(255, 19, 18, 18),
         borderRadius: BorderRadius.circular(50),
-        border: Border.all(color: const Color(0xFF2E2E2E), width: 1),
+        border: Border.all(color: const Color.fromARGB(255, 56, 56, 56), width: 1),
         boxShadow: [
           BoxShadow(
             color: const Color.fromARGB(255, 56, 56, 56).withValues(alpha: .25),

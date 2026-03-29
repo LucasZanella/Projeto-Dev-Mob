@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'package:frontend/Widgets/input_authentication.dart';
 import 'package:frontend/Widgets/button_authentication.dart';
+import 'package:frontend/Widgets/snackbar.dart';
 import 'package:frontend/Screens/register_screen.dart';
 import 'package:frontend/Utils/input_validators.dart';
+import 'package:frontend/Services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -61,14 +64,44 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
 
-  void login() {
+  void login() async{
     setState(() {
       validateEmail();
       validatePassword();
     });
 
-    if (emailError != null) return;
-    if (passwordError != null) return;
+    if (emailError != null || passwordError != null) {
+      return;
+    }
+
+    final result = await AuthService.login(
+      emailController.text,
+      passwordController.text,
+    );
+
+    if (!mounted) return;
+
+    if (result["success"]) {
+
+      Snackbar.show(
+        context,
+        icon: Icons.check_circle,
+        color: Colors.green,
+        message: result["message"],
+      );
+
+      Navigator.pushReplacementNamed(context, "/home");
+
+    } else {
+
+      Snackbar.show(
+        context,
+        icon: Icons.error,
+        color: Colors.red,
+        message: result["message"],
+      );
+
+  }
   }
 
 

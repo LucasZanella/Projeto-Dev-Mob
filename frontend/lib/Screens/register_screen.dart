@@ -4,6 +4,8 @@ import 'package:frontend/Widgets/button_authentication.dart';
 import 'package:frontend/Screens/login_screen.dart';
 import 'package:frontend/Utils/input_validators.dart';
 import 'package:frontend/Widgets/password_requirement.dart';
+import 'package:frontend/Widgets/snackbar.dart';
+import 'package:frontend/Services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -42,31 +44,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
 
-    void validateName() {
-      setState(() {
-        if (!InputValidators.nameValid(nameController.text)) {
-          nameError = "Digite um nome válido";
-        } else {
-          nameError = null;
-        }
-      });
+  void validateName() {
+
+    if (!InputValidators.nameValid(nameController.text)) {
+      nameError = "Digite um nome válido";
+    } else {
+      nameError = null;
     }
+  }
 
 
   void validateEmail() {
-    setState(() {
 
-      if (emailController.text.isEmpty) {
-        emailError = "Digite seu email";
-      } 
-      else if (!InputValidators.emailValid(emailController.text)) {
-        emailError = "Email inválido";
-      } 
-      else {
-        emailError = null;
-      }
-
-    });
+    if (emailController.text.isEmpty) {
+      emailError = "Digite seu email";
+    } 
+    else if (!InputValidators.emailValid(emailController.text)) {
+      emailError = "Email inválido";
+    } 
+    else {
+      emailError = null;
+    }
   }
 
 
@@ -78,9 +76,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
 
   void validatePassword() {
-    String password = passwordController.text;
-
     setState(() {
+      String password = passwordController.text;
+
       hasMinLength = InputValidators.hasMinLength(password);
       hasNumber = InputValidators.hasNumber(password);
       hasSpecial = InputValidators.hasSpecialChar(password);
@@ -90,15 +88,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void validateConfirmPassword() {
-    final password = passwordController.text;
-    final confirm = confirmPasswordController.text;
-
     setState(() {
-      passwordsMatch = InputValidators.passwordsMatch(password, confirm) && password.isNotEmpty && confirm.isNotEmpty;
+      final password = passwordController.text;
+      final confirm = confirmPasswordController.text;
+
+    passwordsMatch = InputValidators.passwordsMatch(password, confirm) && password.isNotEmpty && confirm.isNotEmpty;
     });
   }
 
-  void register() {
+
+  void register() async {
 
     setState(() {
       validateName();
@@ -107,13 +106,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
       validateConfirmPassword();
     });
 
-    if (nameError != null) return;
-    
-    if (emailError != null) return;
+    if (nameError != null || emailError != null || !passwordsMatch) {
+      return;
+    }
 
     if (!InputValidators.passwordValid(passwordController.text)) return;
 
-    if (!passwordsMatch) return;
+    final result = await AuthService.register(
+      nameController.text,
+      emailController.text,
+      passwordController.text,
+    );
+
+    if (!mounted) return;
+
+    if (result["success"]) {
+
+      Snackbar.show(
+        context,
+        icon: Icons.check_circle,
+        color: Colors.green,
+        message: result["message"],
+      );
+
+      Navigator.of(context).push(_createRoute());
+
+    } else {
+
+      Snackbar.show(
+        context,
+        icon: Icons.error,
+        color: Colors.red,
+        message: result["message"],
+      );
+
+    }
   }
 
 
@@ -242,7 +269,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ButtonAuthentication(
                 customColor: const Color.fromARGB(255, 10, 185, 121),
                 text: "Registrar",
-                onTap: register,
+                onTap: register, 
               ),
 
               const SizedBox(height: 25),

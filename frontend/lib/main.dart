@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       /// tela inicial
-      initialRoute: "/home",
+      initialRoute: "/login",
 
       /// rotas do app
       routes: {
