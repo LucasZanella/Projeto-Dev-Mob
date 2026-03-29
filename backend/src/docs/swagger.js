@@ -9,7 +9,7 @@ const options = {
             description: "API para gerenciamento de cofre de senhas"
         },
         servers: [
-            { url: "http://localhost:3000" }
+            { url: "https://projeto-dev-mob.onrender.com" }
         ],
         components: {
             securitySchemes: {
