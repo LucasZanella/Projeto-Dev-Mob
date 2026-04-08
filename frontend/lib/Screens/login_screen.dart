@@ -74,34 +74,47 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    final result = await AuthService.login(
-      emailController.text,
-      passwordController.text,
-    );
+    try {
 
-    if (!mounted) return;
-
-    if (result["success"]) {
-
-      Snackbar.show(
-        context,
-        icon: Icons.check_circle,
-        color: Colors.green,
-        message: result["message"],
+      final result = await AuthService.login(
+        emailController.text,
+        passwordController.text,
       );
 
-      Navigator.pushReplacementNamed(context, "/home");
+      if (!mounted) return;
 
-    } else {
+      if (result["success"]) {
+
+        Snackbar.show(
+          context,
+          icon: Icons.check_circle,
+          color: Colors.green,
+          message: result["message"],
+        );
+
+        Navigator.pushReplacementNamed(context, "/home");
+
+      } else {
+
+        Snackbar.show(
+          context,
+          icon: Icons.error,
+          color: Colors.red,
+          message: result["message"],
+        );
+
+      }
+
+    } catch (e) {
 
       Snackbar.show(
         context,
         icon: Icons.error,
         color: Colors.red,
-        message: result["message"],
+        message: "Erro de conexão com o servidor",
       );
 
-  }
+    }
   }
 
 

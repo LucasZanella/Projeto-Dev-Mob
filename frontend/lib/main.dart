@@ -6,6 +6,7 @@ import 'Screens/home_screen.dart';
 import 'Screens/add_password_screen.dart';
 import 'Screens/details_password_screen.dart';
 import 'Screens/edit_password_screen.dart';
+import 'Screens/auth_check_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,10 +22,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       /// tela inicial
-      initialRoute: "/login",
+      initialRoute: "/authCheck",
 
       /// rotas do app
       routes: {
+        "/authCheck": (context) => const AuthCheckScreen(),
         "/login": (context) => const LoginScreen(),
         "/register": (context) => const RegisterScreen(),
         "/home": (context) => const HomeScreen(),

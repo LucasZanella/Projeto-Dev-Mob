@@ -14,7 +14,13 @@ class Snackbar {
       behavior: SnackBarBehavior.floating,
       backgroundColor: color,
       elevation: 10,
-      duration: const Duration(seconds: 4),
+      duration: const Duration(seconds: 3),
+
+      margin: const EdgeInsets.only(
+        bottom: 90,
+        left: 16,
+        right: 16,
+      ),
 
       content: Row(
         children: [

@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:frontend/Models/user_model.dart';
+import 'package:frontend/Services/session_service.dart';
 
 class AuthService {
 
-  static const baseUrl = "http://localhost:8000";
+  static const baseUrl = "https://projeto-dev-mob.onrender.com";
 
   static Future<Map<String, dynamic>> login(String email, String password) async {
 
@@ -14,7 +15,7 @@ class AuthService {
     );
 
     final response = await http.post(
-      Uri.parse("$baseUrl/login"),
+      Uri.parse("$baseUrl/auth/login"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(loginUser.toJson()),
     );
@@ -22,15 +23,20 @@ class AuthService {
     final data = jsonDecode(response.body);
 
     if (response.statusCode == 200) {
+
+      final token = data["token"];
+
+      await SessionService.saveToken(token);
+
       return {
         "success": true,
-        "message": data["message"] ?? "Login realizado com sucesso"
+        "message": "Login realizado com sucesso"
       };
     }
 
     return {
       "success": false,
-      "message": data["detail"] ?? "Erro ao fazer login"
+      "message": data["error"] ?? "Erro ao fazer login"
     };
   }
 
@@ -43,7 +49,7 @@ class AuthService {
     );
 
     final response = await http.post(
-      Uri.parse("$baseUrl/register"),
+      Uri.parse("$baseUrl/auth/register"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(registerUser.toJson()),
     );
