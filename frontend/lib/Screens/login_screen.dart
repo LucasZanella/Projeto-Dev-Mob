@@ -85,13 +85,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (result["success"]) {
 
-        Snackbar.show(
-          context,
-          icon: Icons.check_circle,
-          color: Colors.green,
-          message: result["message"],
-        );
-
         Navigator.pushReplacementNamed(context, "/home");
 
       } else {

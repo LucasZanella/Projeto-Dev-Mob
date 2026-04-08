@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Widgets/navbar.dart';
+import 'package:frontend/widgets/password.dart';
 import 'package:frontend/Services/session_service.dart';
+import 'package:frontend/Services/password_service.dart';
+import 'package:frontend/Models/password_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,9 +13,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<PasswordModel> passwords = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadPasswords();
+  }
+
+  void loadPasswords() async {
+    try {
+      final data = await PasswordService.getPasswords();
+
+      setState(() {
+        passwords = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   void logout() async {
-
     await SessionService.removeToken();
 
     if (!mounted) return;
@@ -22,7 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 19, 18, 18),
 
@@ -32,13 +56,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
           child: Column(
             children: [
+              const SizedBox(height: 30),
 
-            const SizedBox(height: 50),
               /// HEADER
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-
                   const Text(
                     "Olá!!",
                     style: TextStyle(
@@ -49,32 +72,84 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   IconButton(
-                    icon: const Icon(
-                      Icons.logout,
-                      color: Colors.red,
-                      size: 32,
-                    ),
+                    icon: const Icon(Icons.logout, color: Colors.red, size: 32),
                     onPressed: logout,
-                  )
-
+                  ),
                 ],
+              ),
+
+              const SizedBox(height: 10),
+
+              const Divider(
+                color: Colors.white12,
+                thickness: 1,
               ),
 
               const SizedBox(height: 20),
 
-              /// CONTEÚDO FUTURO
-              const Expanded(
-                child: Center(
-                  child: Text(
-                    "senhas",
-                    style: TextStyle(
-                      color: Colors.white54,
-                      fontSize: 16,
+              /// ÁREA DAS SENHAS
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Suas senhas",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
+
+                    const SizedBox(height: 10),
+
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1E1E1E),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+
+                        child: isLoading
+
+                            /// LOADING
+                            ? const Center(child: CircularProgressIndicator())
+
+                            /// LISTA VAZIA
+                            : passwords.isEmpty
+                            ? const Center(
+                                child: Text(
+                                  "Nenhuma senha cadastrada",
+                                  style: TextStyle(color: Colors.white54),
+                                ),
+                              )
+                              
+                            /// LISTA DE SENHAS
+                            : ListView.builder(
+                                itemCount: passwords.length,
+                                itemBuilder: (context, index) {
+                                  final password = passwords[index];
+
+                                  return Password(
+                                    service: password.service,
+
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        "/detailsPassword",
+                                        arguments: password,
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-
             ],
           ),
         ),
@@ -87,11 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
           () => Navigator.pushNamed(context, "/addPassword"),
           () {},
         ],
-        colors: [
-          Colors.transparent,
-          Colors.green,
-          Colors.transparent
-        ],
+        colors: [Colors.transparent, Colors.green, Colors.transparent],
       ),
     );
   }
