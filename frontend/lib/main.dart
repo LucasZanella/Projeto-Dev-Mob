@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'Screens/login_screen.dart';
-import 'Screens/register_screen.dart';
-import 'Screens/home_screen.dart';
-import 'Screens/add_password_screen.dart';
-import 'Screens/details_password_screen.dart';
-import 'Screens/edit_password_screen.dart';
-import 'Screens/auth_check_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/register_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/add_password_screen.dart';
+import 'screens/details_password_screen.dart';
+import 'screens/edit_password_screen.dart';
+import 'screens/auth_check_screen.dart';
+import 'package:frontend/models/password_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,7 +32,13 @@ class MyApp extends StatelessWidget {
         "/register": (context) => const RegisterScreen(),
         "/home": (context) => const HomeScreen(),
         "/addPassword": (context) => const AddPasswordScreen(),
-        "/detailsPassword": (context) => const DetailsPasswordScreen(),
+
+        "/detailsPassword": (context) {
+          final password = ModalRoute.of(context)!.settings.arguments as PasswordModel;
+
+          return DetailsPasswordScreen(password: password);
+        },
+
         "/editPassword": (context) => const EditPasswordScreen(),
       },
     );

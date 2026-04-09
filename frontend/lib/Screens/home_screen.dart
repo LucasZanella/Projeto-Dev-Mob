@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Widgets/navbar.dart';
-import 'package:frontend/widgets/password.dart';
-import 'package:frontend/Services/session_service.dart';
-import 'package:frontend/Services/password_service.dart';
-import 'package:frontend/Models/password_model.dart';
+import 'package:frontend/widgets/navbar.dart';
+import 'package:frontend/widgets/password_list.dart';
+import 'package:frontend/services/session_service.dart';
+import 'package:frontend/services/password_service.dart';
+import 'package:frontend/models/password_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.all(12),
 
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1E1E1E),
+                          color: const Color.fromARGB(255, 24, 24, 24),
                           borderRadius: BorderRadius.circular(12),
                         ),
 
@@ -132,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 itemBuilder: (context, index) {
                                   final password = passwords[index];
 
-                                  return Password(
+                                  return PasswordList(
                                     service: password.service,
 
                                     onTap: () {

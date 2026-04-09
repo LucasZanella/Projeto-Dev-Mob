@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:frontend/Models/user_model.dart';
-import 'package:frontend/Services/session_service.dart';
+import 'package:frontend/models/user_model.dart';
+import 'package:frontend/services/session_service.dart';
 
 class AuthService {
 

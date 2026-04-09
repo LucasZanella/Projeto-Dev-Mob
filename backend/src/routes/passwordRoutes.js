@@ -125,10 +125,6 @@
  *                 type: string
  *               password:
  *                 type: string
- *               url:
- *                 type: string
- *               notes:
- *                 type: string
  *     responses:
  *       200:
  *         description: Atualizado com sucesso

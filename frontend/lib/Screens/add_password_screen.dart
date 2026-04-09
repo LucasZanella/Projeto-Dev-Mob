@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Widgets/navbar.dart';
+import 'package:frontend/widgets/navbar.dart';
 
 class AddPasswordScreen extends StatefulWidget {
   const AddPasswordScreen({super.key});

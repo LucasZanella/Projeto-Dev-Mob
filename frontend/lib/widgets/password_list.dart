@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Password extends StatelessWidget {
+class PasswordList extends StatelessWidget {
 
   final String service;
   final VoidCallback onTap;
 
-  const Password({
+  const PasswordList({
     super.key,
     required this.service,
     required this.onTap,
@@ -23,7 +23,7 @@ class Password extends StatelessWidget {
         padding: const EdgeInsets.all(16),
 
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 35, 35, 35),
+          color: const Color.fromARGB(255, 29, 29, 29),
           borderRadius: BorderRadius.circular(12),
         ),
 

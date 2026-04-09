@@ -5,7 +5,7 @@ class PasswordModel {
   final String login;
   final String password;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
 
   PasswordModel({
     required this.id,
@@ -13,7 +13,7 @@ class PasswordModel {
     required this.login,
     required this.password,
     required this.createdAt,
-    required this.updatedAt,
+    this.updatedAt,
   });
 
   factory PasswordModel.fromJson(Map<String, dynamic> json) {
@@ -23,7 +23,7 @@ class PasswordModel {
       login: json['login'],
       password: json['password'],
       createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 }

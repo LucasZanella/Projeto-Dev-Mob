@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Services/session_service.dart';
+import 'package:frontend/services/session_service.dart';
 
 class AuthCheckScreen extends StatefulWidget {
   const AuthCheckScreen({super.key});

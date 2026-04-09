@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Widgets/input_authentication.dart';
-import 'package:frontend/Widgets/button_authentication.dart';
-import 'package:frontend/Screens/login_screen.dart';
-import 'package:frontend/Utils/input_validators.dart';
-import 'package:frontend/Widgets/password_requirement.dart';
-import 'package:frontend/Widgets/snackbar.dart';
-import 'package:frontend/Services/auth_service.dart';
+import 'package:frontend/widgets/input_authentication.dart';
+import 'package:frontend/widgets/button_authentication.dart';
+import 'package:frontend/screens/login_screen.dart';
+import 'package:frontend/utils/input_validators.dart';
+import 'package:frontend/widgets/password_requirement.dart';
+import 'package:frontend/widgets/snackbar.dart';
+import 'package:frontend/services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

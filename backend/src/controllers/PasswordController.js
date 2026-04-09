@@ -1,17 +1,3 @@
-/**
- * @swagger
- * /passwords:
- *   get:
- *     summary: Lista todas as senhas do usuário
- *     tags: [Passwords]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Lista de senhas
- */
-
-
 const Password = require('../models/Password');
 
 class PasswordController {
