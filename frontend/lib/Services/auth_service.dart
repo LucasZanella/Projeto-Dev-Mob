@@ -30,7 +30,6 @@ class AuthService {
 
       return {
         "success": true,
-        "message": "Login realizado com sucesso"
       };
     }
 

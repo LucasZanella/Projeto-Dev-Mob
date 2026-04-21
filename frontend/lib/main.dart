@@ -22,10 +22,8 @@ class MyApp extends StatelessWidget {
       title: 'DevMob App',
       debugShowCheckedModeBanner: false,
 
-      /// tela inicial
       initialRoute: "/authCheck",
 
-      /// rotas do app
       routes: {
         "/authCheck": (context) => const AuthCheckScreen(),
         "/login": (context) => const LoginScreen(),
@@ -39,7 +37,11 @@ class MyApp extends StatelessWidget {
           return DetailsPasswordScreen(password: password);
         },
 
-        "/editPassword": (context) => const EditPasswordScreen(),
+        "/editPassword": (context) {
+          final password = ModalRoute.of(context)!.settings.arguments as PasswordModel;
+
+          return EditPasswordScreen(password: password);
+        } 
       },
     );
   }

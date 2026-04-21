@@ -7,6 +7,7 @@ class PasswordTextField extends StatelessWidget {
   final bool readOnly;
   final Widget? suffixIcon;
   final TextInputType keyboardType;
+  final String? errorText;
 
   const PasswordTextField({
     super.key,
@@ -16,6 +17,7 @@ class PasswordTextField extends StatelessWidget {
     this.readOnly = false,
     this.suffixIcon,
     this.keyboardType = TextInputType.text,
+    this.errorText,
   });
 
   @override
@@ -23,8 +25,6 @@ class PasswordTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
-        /// LABEL
         Text(
           label,
           style: const TextStyle(
@@ -36,21 +36,16 @@ class PasswordTextField extends StatelessWidget {
 
         const SizedBox(height: 6),
 
-        /// CAMPO
         TextField(
           controller: controller,
           obscureText: obscureText,
           readOnly: readOnly,
           keyboardType: keyboardType,
 
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 15,
-          ),
+          style: const TextStyle(color: Colors.white, fontSize: 15),
 
           decoration: InputDecoration(
             filled: true,
-
             fillColor: const Color.fromARGB(255, 40, 40, 40),
 
             contentPadding: const EdgeInsets.symmetric(
@@ -72,12 +67,10 @@ class PasswordTextField extends StatelessWidget {
 
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Colors.blue,
-                width: 1.2,
-              ),
+              borderSide: const BorderSide(color: Colors.blue, width: 1.2),
             ),
 
+            errorText: errorText, // 🔥 aqui
             suffixIcon: suffixIcon,
           ),
         ),

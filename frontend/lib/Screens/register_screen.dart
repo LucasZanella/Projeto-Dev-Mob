@@ -178,7 +178,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
 
             children: [
-              const SizedBox(height: 15),
               Container(
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.only(left: 25),
@@ -313,7 +312,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 15),
             ],
           ),
         ),

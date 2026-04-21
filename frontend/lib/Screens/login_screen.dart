@@ -124,7 +124,6 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
 
             children: [
-              const SizedBox(height: 15),
               
               Container(
                 alignment: Alignment.centerLeft,
@@ -195,10 +194,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-
                 ],
               ),
-              const SizedBox(height: 15),
             ],
           ),
         ),

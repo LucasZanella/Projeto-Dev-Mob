@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/widgets/navbar.dart';
 import 'package:frontend/widgets/password_textfield.dart';
 import 'package:frontend/models/password_model.dart';
+import 'package:frontend/services/password_service.dart';
+import 'package:frontend/widgets/snackbar.dart';
 
 class DetailsPasswordScreen extends StatefulWidget {
   final PasswordModel password;
@@ -20,6 +22,7 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
   late TextEditingController serviceController;
   late TextEditingController loginController;
   late TextEditingController passwordController;
+  late PasswordModel password;
 
   bool _showSensitiveData = false;
 
@@ -27,11 +30,11 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
   void initState() {
     super.initState();
 
-    serviceController = TextEditingController(text: widget.password.service);
+    password = widget.password;
 
-    loginController = TextEditingController(text: widget.password.login);
-
-    passwordController = TextEditingController(text: widget.password.password);
+    serviceController = TextEditingController(text: password.service);
+    loginController = TextEditingController(text: password.login);
+    passwordController = TextEditingController(text: password.password);
   }
 
   void toggleVisibility() {
@@ -40,12 +43,115 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
     });
   }
 
-  bool neverUpdated(DateTime created, DateTime updated) {
+  bool neverUpdated(DateTime created, DateTime? updated) {
+    if (updated == null) return true;
     return updated.difference(created).inSeconds == 0;
   }
 
-  void deletePassword() {
-    print("Senha deletada");
+  Future<void> reloadPassword() async {
+    try {
+      final list = await PasswordService.getPasswords();
+
+      final updatedPassword = list.firstWhere(
+        (p) => p.id == password.id,
+      );
+
+      setState(() {
+        password = updatedPassword;
+
+        serviceController.text = password.service;
+        loginController.text = password.login;
+        passwordController.text = password.password;
+      });
+
+    } catch (e) {
+      Snackbar.show(
+        context,
+        icon: Icons.error,
+        color: Colors.red,
+        message: "Erro ao carregar os dados!",
+      );
+    }
+  }
+
+  Future<void> goToEdit() async {
+    final updated = await Navigator.pushNamed(
+      context,
+      "/editPassword",
+      arguments: password,
+    );
+
+    if (updated == true) {
+      await reloadPassword();
+    }
+  }
+
+  void confirmDeletePassword() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+          title: const Text(
+            "Confirmar exclusão",
+            style: TextStyle(color: Colors.white),
+          ),
+          content: const Text(
+            "Tem certeza que deseja excluir esta senha?",
+            style: TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Cancelar",
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                deletePassword();
+              },
+              child: const Text(
+                "Excluir",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void deletePassword() async {
+    try {
+      await PasswordService.deletePassword(password.id); // ✅ corrigido
+
+      if (!mounted) return;
+
+      Snackbar.show(
+        context,
+        icon: Icons.check_circle,
+        color: Colors.green,
+        message: "Senha removida!",
+      );
+
+      Navigator.pop(context, true);
+
+    } catch (e) {
+      Snackbar.show(
+        context,
+        icon: Icons.error,
+        color: Colors.red,
+        message: "Erro ao remover a senha!",
+      );
+    }
   }
 
   String formatDate(DateTime date) {
@@ -57,18 +163,8 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
   String _monthName(int month) {
     const months = [
       '',
-      'Jan',
-      'Fev',
-      'Mar',
-      'Abr',
-      'Mai',
-      'Jun',
-      'Jul',
-      'Ago',
-      'Set',
-      'Out',
-      'Nov',
-      'Dez'
+      'Jan','Fev','Mar','Abr','Mai','Jun',
+      'Jul','Ago','Set','Out','Nov','Dez'
     ];
     return months[month];
   }
@@ -76,7 +172,7 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final password = widget.password;
+    final password = this.password; // ✅ CORREÇÃO PRINCIPAL
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 19, 18, 18),
@@ -91,7 +187,6 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
               
               const SizedBox(height: 28),
 
-              /// TÍTULO
               const Center(
                 child: Text(
                   "Detalhes",
@@ -105,7 +200,6 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
 
               const SizedBox(height: 10),
 
-              /// DIVISÓRIA
               const Divider(
                 color: Colors.white12,
                 thickness: 1,
@@ -113,10 +207,8 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
 
               const SizedBox(height: 25),
 
-              /// CARD DE INFORMAÇÕES
               Container(
                 padding: const EdgeInsets.all(20),
-
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 30, 30, 30),
                   borderRadius: BorderRadius.circular(16),
@@ -125,7 +217,6 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
                 child: Column(
                   children: [
 
-                    /// SERVIÇO
                     PasswordTextField(
                       label: "Nome do serviço",
                       controller: serviceController,
@@ -134,7 +225,6 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
 
                     const SizedBox(height: 18),
 
-                    /// LOGIN
                     PasswordTextField(
                       label: "Usuário / Login",
                       controller: loginController,
@@ -153,7 +243,6 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
 
                     const SizedBox(height: 18),
 
-                    /// SENHA
                     PasswordTextField(
                       label: "Senha",
                       controller: passwordController,
@@ -172,12 +261,10 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
 
                     const SizedBox(height: 28),
 
-                    /// DATAS
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
 
-                        /// CRIAÇÃO
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -189,9 +276,7 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
                                 fontSize: 14,
                               ),
                             ),
-
                             const SizedBox(height: 6),
-
                             Text(
                               formatDate(password.createdAt),
                               style: const TextStyle(
@@ -203,7 +288,6 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
                           ],
                         ),
 
-                        /// ATUALIZAÇÃO
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -215,11 +299,9 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
                                 fontSize: 14,
                               ),
                             ),
-
                             const SizedBox(height: 6),
-
                             Text(
-                              neverUpdated(password.createdAt, password.updatedAt!)
+                              neverUpdated(password.createdAt, password.updatedAt)
                                   ? "Nunca"
                                   : formatDate(password.updatedAt!),
                               style: const TextStyle(
@@ -243,13 +325,9 @@ class _DetailsPasswordScreenState extends State<DetailsPasswordScreen> {
       bottomNavigationBar: NavBar(
         icons: [Icons.arrow_back, Icons.edit, Icons.delete],
         actions: [
-          () => Navigator.pop(context),
-          () => Navigator.pushNamed(
-            context,
-            "/editPassword",
-            arguments: password,
-          ),
-          () => deletePassword(),
+          () => Navigator.pop(context, true),
+          () => goToEdit(),
+          () => confirmDeletePassword(),
         ],
         colors: [Colors.blue, Colors.amber, Colors.red],
       ),

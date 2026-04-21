@@ -58,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               const SizedBox(height: 30),
 
-              /// HEADER
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -80,10 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const SizedBox(height: 10),
 
-              const Divider(
-                color: Colors.white12,
-                thickness: 1,
-              ),
+              const Divider(color: Colors.white12, thickness: 1),
 
               const SizedBox(height: 20),
 
@@ -113,10 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
 
                         child: isLoading
-
-                            /// LOADING
                             ? const Center(child: CircularProgressIndicator())
-
                             /// LISTA VAZIA
                             : passwords.isEmpty
                             ? const Center(
@@ -125,7 +118,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   style: TextStyle(color: Colors.white54),
                                 ),
                               )
-                              
                             /// LISTA DE SENHAS
                             : ListView.builder(
                                 itemCount: passwords.length,
@@ -135,12 +127,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                   return PasswordList(
                                     service: password.service,
 
-                                    onTap: () {
-                                      Navigator.pushNamed(
+                                    onTap: () async {
+                                      final result = await Navigator.pushNamed(
                                         context,
                                         "/detailsPassword",
                                         arguments: password,
                                       );
+
+                                      if (result == true) {
+                                        loadPasswords();
+                                      }
                                     },
                                   );
                                 },
@@ -159,7 +155,13 @@ class _HomeScreenState extends State<HomeScreen> {
         icons: [null, Icons.add, null],
         actions: [
           () {},
-          () => Navigator.pushNamed(context, "/addPassword"),
+          () async {
+            final result = await Navigator.pushNamed(context, "/addPassword");
+
+            if (result == true) {
+              loadPasswords();
+            }
+          },
           () {},
         ],
         colors: [Colors.transparent, Colors.green, Colors.transparent],
