@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'screens/login_screen.dart';
-import 'screens/register_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/add_password_screen.dart';
-import 'screens/details_password_screen.dart';
-import 'screens/edit_password_screen.dart';
-import 'screens/auth_check_screen.dart';
+import 'package:frontend/screens/login_screen.dart';
+import 'package:frontend/screens/register_screen.dart';
+import 'package:frontend/screens/home_screen.dart';
+import 'package:frontend/screens/add_password_screen.dart';
+import 'package:frontend/screens/details_password_screen.dart';
+import 'package:frontend/screens/edit_password_screen.dart';
+import 'package:frontend/screens/auth_check_screen.dart';
 import 'package:frontend/models/password_model.dart';
 
 void main() {
