@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:frontend/utils/input_validators.dart';
 
 class PasswordGenerator extends StatefulWidget {
   final TextEditingController controller;
@@ -51,13 +52,12 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
     final pass = widget.controller.text.trim();
     final confirm = confirmController.text.trim();
 
-    setState(() {
-      if (pass != confirm) {
+    if (isManual && !InputValidators.passwordsMatch(pass, confirm)) {
+      setState(() {
         confirmError = "As senhas não coincidem";
-      } else {
-        confirmError = null;
-      }
-    });
+      });
+      return;
+    }
   }
 
   void generatePassword() {
