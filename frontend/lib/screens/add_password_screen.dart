@@ -16,6 +16,8 @@ class _AddPasswordScreen extends State<AddPasswordScreen> {
   final TextEditingController serviceController = TextEditingController();
   final TextEditingController loginController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  
+  final passwordGeneratorKey = GlobalKey<PasswordGeneratorState>();
 
   String? serviceError;
   String? loginError;
@@ -25,6 +27,10 @@ class _AddPasswordScreen extends State<AddPasswordScreen> {
 
   Future<void> createPassword() async {
     if (isLoading) return;
+
+    if (!(passwordGeneratorKey.currentState?.validateManualPassword() ?? true)) {
+      return;
+    }
 
     final service = serviceController.text.trim();
     final login = loginController.text.trim();
@@ -111,7 +117,8 @@ class _AddPasswordScreen extends State<AddPasswordScreen> {
             const SizedBox(height: 16),
 
             PasswordGenerator(
-              controller: passwordController, 
+              key: passwordGeneratorKey,
+              controller: passwordController,
               errorText: passwordError,
             ),
           ],

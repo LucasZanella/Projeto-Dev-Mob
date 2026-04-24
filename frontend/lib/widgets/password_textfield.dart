@@ -70,7 +70,7 @@ class PasswordTextField extends StatelessWidget {
               borderSide: const BorderSide(color: Colors.blue, width: 1.2),
             ),
 
-            errorText: errorText, // 🔥 aqui
+            errorText: errorText,
             suffixIcon: suffixIcon,
           ),
         ),

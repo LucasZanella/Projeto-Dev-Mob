@@ -13,10 +13,10 @@ class PasswordGenerator extends StatefulWidget {
   });
 
   @override
-  State<PasswordGenerator> createState() => _PasswordGeneratorState();
+  State<PasswordGenerator> createState() => PasswordGeneratorState();
 }
 
-class _PasswordGeneratorState extends State<PasswordGenerator> {
+class PasswordGeneratorState extends State<PasswordGenerator> {
   bool isManual = false;
 
   bool hasLower = false;
@@ -48,7 +48,7 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
     });
   }
 
-  void validateManualPassword() {
+  bool validateManualPassword() {
     final pass = widget.controller.text.trim();
     final confirm = confirmController.text.trim();
 
@@ -56,8 +56,14 @@ class _PasswordGeneratorState extends State<PasswordGenerator> {
       setState(() {
         confirmError = "As senhas não coincidem";
       });
-      return;
+      return false;
     }
+
+    setState(() {
+      confirmError = null;
+    });
+
+    return true;
   }
 
   void generatePassword() {

@@ -20,6 +20,8 @@ class _EditPasswordScreen extends State<EditPasswordScreen> {
   final TextEditingController loginController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  final passwordGeneratorKey = GlobalKey<PasswordGeneratorState>();
+
   bool isLoading = false;
 
   String keepOldIfEmpty(String newValue, String oldValue) {
@@ -36,6 +38,10 @@ class _EditPasswordScreen extends State<EditPasswordScreen> {
 
   Future<void> updatePassword() async {
     if (isLoading) return;
+
+    if (!(passwordGeneratorKey.currentState?.validateManualPassword() ?? true)) {
+      return;
+    }
 
     final newService = keepOldIfEmpty(
       serviceController.text,
@@ -125,7 +131,10 @@ class _EditPasswordScreen extends State<EditPasswordScreen> {
 
             const SizedBox(height: 16),
 
-            PasswordGenerator(controller: passwordController),
+            PasswordGenerator(
+              key: passwordGeneratorKey,
+              controller: passwordController,
+            ),
           ],
         ),
       ),
@@ -134,12 +143,12 @@ class _EditPasswordScreen extends State<EditPasswordScreen> {
         icons: [
           Icons.arrow_back,
           null,
-          isLoading ? Icons.hourglass_top : Icons.check, // 🔥 loading visual
+          isLoading ? Icons.hourglass_top : Icons.check,
         ],
         actions: [
           () => Navigator.pop(context),
           () {},
-          isLoading ? () {} : updatePassword, // 🔥 bloqueia clique
+          isLoading ? () {} : updatePassword,
         ],
         colors: [Colors.blue, Colors.transparent, Colors.green],
       ),
